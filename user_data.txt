@@ -1,3 +1,6 @@
+#### php+mysql+wordpress
+
+
 #! /bin/bash
 yum install httpd -y
 service httpd start
@@ -16,6 +19,7 @@ CONFIG_FILE="/etc/httpd/conf/httpd.conf"
 cp -p "$CONFIG_FILE" "$CONFIG_FILE.orig.`date \"+%Y%m%d_%H%M%S\"`" &&
 awk -F' ' '$1 == "AllowOverride" {print "AllowOverride All" ; next } { print }' "$CONFIG_FILE" >"$CONFIG_FILE~" &&
 mv "$CONFIG_FILE~" "$CONFIG_FILE"
+chown -R apache:apache /var/www/html
 systemctl restart httpd.service
 
 
