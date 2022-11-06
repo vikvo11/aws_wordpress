@@ -1,0 +1,75 @@
+#! /bin/bash
+yum install httpd -y
+service httpd start
+chkconfig httpd on
+yum install wget -y
+yum install php php-mysql mysql -y
+amazon-linux-extras install -y php7.4
+rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+yum install mysql-community-server
+systemctl start mysqld
+systemctl enable mysqld
+wget "https://wordpress.org/latest.tar.gz" -O /var/www/html/latest.tar.gz
+tar -zxvf /var/www/html/latest.tar.gz -C /var/www/html
+mv /var/www/html/wordpress/* /var/www/html
+CONFIG_FILE="/etc/httpd/conf/httpd.conf"
+cp -p "$CONFIG_FILE" "$CONFIG_FILE.orig.`date \"+%Y%m%d_%H%M%S\"`" &&
+awk -F' ' '$1 == "AllowOverride" {print "AllowOverride All" ; next } { print }' "$CONFIG_FILE" >"$CONFIG_FILE~" &&
+mv "$CONFIG_FILE~" "$CONFIG_FILE"
+systemctl restart httpd.service
+
+
+
+####
+wget https://wordpress.org/latest.tar.gz
+cd /etc/httpd/conf
+edit httpd.conf
+>> AllowOverride None >> All
+
+
+/var/www/html 
+
+chown -R apache:apache /var/www/html
+
+
+
+sudo yum install php php-common php-pear -y
+sudo yum install php-{cgi,curl,mbstring,gd,mysqlnd,gettext,json,xml,fpm,intl,zip}
+
+
+
+
+CREATE DATABASE yankilldb;
+
+mysql -h yankilldb.cqrhq83wdo61.eu-central-1.rds.amazonaws.com -u yankilldb -p
+
+
+
+############
+/etc/httpd/conf/httpd.conf
+
+
+# Using awk to delete, modify or append keys
+# In case of an error the original configuration file is left intact
+# Also leaves a timestamped backup copy (omit the cp -p if none is required)
+CONFIG_FILE="/etc/httpd/conf/httpd.conf"
+cp -p "$CONFIG_FILE" "$CONFIG_FILE.orig.`date \"+%Y%m%d_%H%M%S\"`" &&
+awk -F '[ \t]*=[ \t]*' '$1=="keytodelete" { next } $1=="keytomodify" { print "keytomodify=newvalue" ; next } { print } END { print "keytoappend=value" }' "$CONFIG_FILE" >"$CONFIG_FILE~" &&
+mv "$CONFIG_FILE~" "$CONFIG_FILE" ||
+echo "an error has occurred (permissions? disk space?)"
+
+
+#######
+
+CONFIG_FILE="/etc/httpd/conf/httpd.conf"
+awk -F '[ \t]* [ \t]*' '$1=="AllowOverride" { print "AllowOverride All" ; next } { print }' "$CONFIG_FILE" >"$CONFIG_FILE~"
+
+AllowOverride All
+
+#-------------
+awk -F' ' '$1 == "AllowOverride" {print $2}' "/etc/httpd/conf/httpd.conf"
+#--------------------
+awk -F' ' '$1 == "AllowOverride" {print "AllowOverride All" ; next } { print }' "$CONFIG_FILE" >"$CONFIG_FILE~"
+#--------------
+awk -F' ' '$1 == "AllowOverride" {print "AllowOverride All" ; next } { print }' "$CONFIG_FILE" >"$CONFIG_FILE~"
+awk -F' ' '$1 == "AllowOverride" {print $2}' "$CONFIG_FILE~"
